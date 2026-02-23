@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users & Auth ────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MANAGER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(MANAGER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// ─── Portfolio ───────────────────────────────────────────────
+
+model PortfolioCategory {
+  id       String             @id @default(cuid())
+  name     String             @unique
+  slug     String             @unique
+  order    Int                @default(0)
+  projects PortfolioProject[]
+
+  @@map("portfolio_categories")
+}
+
+model PortfolioProject {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  cover       String
+  challenge   String   @db.Text
+  solution    String   @db.Text
+  techStack   String[]
+  metrics     Json?
+  published   Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String
+  category   PortfolioCategory @relation(fields: [categoryId], references: [id])
+  images     PortfolioImage[]
+
+  @@map("portfolio_projects")
+}
+
+model PortfolioImage {
+  id        String @id @default(cuid())
+  url       String
+  alt       String @default("")
+  order     Int    @default(0)
+
+  projectId String
+  project   PortfolioProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_images")
+}
+
+// ─── Services ────────────────────────────────────────────────
+
+model Service {
+  id               String  @id @default(cuid())
+  title            String
+  slug             String  @unique
+  description      String  @db.Text
+  priceFrom        Int?
+  priceTo          Int?
+  durationEstimate String?
+  icon             String?
+  order            Int     @default(0)
+  published        Boolean @default(true)
+
+  parentId String?
+  parent   Service?  @relation("ServiceTree", fields: [parentId], references: [id])
+  children Service[] @relation("ServiceTree")
+
+  relatedFrom ServiceRelation[] @relation("RelatedFrom")
+  relatedTo   ServiceRelation[] @relation("RelatedTo")
+
+  briefSelections BriefSelection[]
+
+  @@map("services")
+}
+
+model ServiceRelation {
+  id        String @id @default(cuid())
+  serviceId String
+  relatedId String
+
+  service Service @relation("RelatedFrom", fields: [serviceId], references: [id], onDelete: Cascade)
+  related Service @relation("RelatedTo", fields: [relatedId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, relatedId])
+  @@map("service_relations")
+}
+
+// ─── Leads ───────────────────────────────────────────────────
+
+enum LeadStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  name      String
+  phone     String
+  telegram  String?
+  budget    String?
+  comment   String?    @db.Text
+  status    LeadStatus @default(NEW)
+  source    String     @default("website")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  telegramSent Boolean @default(false)
+  emailSent    Boolean @default(false)
+
+  selections BriefSelection[]
+
+  @@map("leads")
+}
+
+model BriefSelection {
+  id     String @id @default(cuid())
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  @@map("brief_selections")
+}
