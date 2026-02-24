@@ -20,15 +20,103 @@ interface PortfolioProject {
   images: { id: string; url: string; alt: string; order: number }[];
 }
 
+// Fallback data for when API is unavailable
+const fallbackProjects: Record<string, PortfolioProject> = {
+  technomarket: {
+    id: "1",
+    title: "ТехноМаркет — Интернет-магазин",
+    slug: "technomarket",
+    cover: "",
+    challenge:
+      "Клиенту требовался современный интернет-магазин с быстрым поиском, фильтрацией товаров и удобной системой оплаты. Старый сайт загружался медленно и плохо конвертировал мобильный трафик.",
+    solution:
+      "Разработали магазин на Next.js с серверным рендерингом, оптимизированными изображениями и мгновенным поиском. Внедрили систему рекомендаций и упрощённый checkout в 2 шага.",
+    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Redis", "Stripe"],
+    metrics: { "Конверсия": "+45%", "Скорость загрузки": "95/100", "Мобильные заказы": "+60%" },
+    category: { id: "cat-web", name: "Веб-разработка", slug: "web-development" },
+    images: [],
+  },
+  finanspro: {
+    id: "2",
+    title: "ФинансПро — Корпоративный сайт",
+    slug: "finanspro",
+    cover: "",
+    challenge:
+      "Финансовой компании нужен был представительский сайт, вызывающий доверие у корпоративных клиентов. Существующий сайт устарел и не отражал уровень компании.",
+    solution:
+      "Создали премиальный корпоративный сайт с анимациями, интерактивными калькуляторами и интеграцией с CRM. Акцент на UX и скорости загрузки.",
+    techStack: ["React", "Node.js", "Figma", "GSAP"],
+    metrics: { "Лиды": "+120%", "Отказы": "-30%", "Время на сайте": "+85%" },
+    category: { id: "cat-web", name: "Веб-разработка", slug: "web-development" },
+    images: [],
+  },
+  stroygrad: {
+    id: "3",
+    title: "СтройГрад — Маркетинговая кампания",
+    slug: "stroygrad",
+    cover: "",
+    challenge:
+      "Строительная компания тратила бюджет на рекламу без измеримого результата. Нужна была комплексная digital-стратегия с прозрачной аналитикой.",
+    solution:
+      "Запустили кампании в Яндекс Директ и Google Ads с микроконверсиями, ретаргетингом и сквозной аналитикой. Оптимизировали посадочные страницы под каждый сегмент.",
+    techStack: ["Яндекс Директ", "Google Ads", "Analytics", "Метрика"],
+    metrics: { "ROI": "340%", "CPA": "-55%", "Заявки": "+180%" },
+    category: { id: "cat-marketing", name: "Маркетинг", slug: "marketing" },
+    images: [],
+  },
+  artstudio: {
+    id: "4",
+    title: "АртСтудия — Фирменный стиль",
+    slug: "artstudio",
+    cover: "",
+    challenge:
+      "Креативное агентство выросло из начального бренда и нуждалось в полном ребрендинге: логотип, фирменный стиль, гайдлайны.",
+    solution:
+      "Разработали минималистичный визуальный язык бренда, включающий логотип, типографику, палитру, шаблоны и брендбук на 40+ страниц.",
+    techStack: ["Figma", "Illustrator", "Photoshop", "After Effects"],
+    metrics: { "Узнаваемость": "+80%", "Охват соцсетей": "+150%" },
+    category: { id: "cat-design", name: "Дизайн", slug: "design" },
+    images: [],
+  },
+  ecolife: {
+    id: "5",
+    title: "ЭкоЛайф — Лендинг",
+    slug: "ecolife",
+    cover: "",
+    challenge:
+      "Стартапу эко-товаров нужна была конверсионная посадочная страница для запуска краудфандинга. Бюджет ограничен, сроки — 5 дней.",
+    solution:
+      "Спроектировали и разработали лендинг за 4 дня с микроанимациями, видео-секцией и формой предзаказа. Lighthouse 98/100.",
+    techStack: ["Next.js", "Framer Motion", "TailwindCSS", "Vercel"],
+    metrics: { "Конверсия": "12%", "Скорость": "98/100", "Предзаказы": "500+" },
+    category: { id: "cat-web", name: "Веб-разработка", slug: "web-development" },
+    images: [],
+  },
+  fitnessclub: {
+    id: "6",
+    title: "ФитнесКлуб — Таргетированная реклама",
+    slug: "fitnessclub",
+    cover: "",
+    challenge:
+      "Фитнес-клуб терял клиентов после пандемии. Нужен был приток новых лидов через соцсети с минимальным CPA.",
+    solution:
+      "Настроили таргетированную рекламу в VK и Telegram с сегментацией по гео и интересам. Создали воронку: реклама → квиз → бесплатная тренировка → абонемент.",
+    techStack: ["VK Ads", "Telegram Ads", "Analytics", "Метрика"],
+    metrics: { "Лиды": "+200%", "CPA": "-40%", "Абонементы": "+95%" },
+    category: { id: "cat-marketing", name: "Маркетинг", slug: "marketing" },
+    images: [],
+  },
+};
+
 async function getProject(slug: string): Promise<PortfolioProject | null> {
   try {
     const res = await fetch(`${API_URL}/portfolio/${slug}`, {
       next: { revalidate: 60 },
     });
-    if (!res.ok) return null;
+    if (!res.ok) return fallbackProjects[slug] || null;
     return res.json();
   } catch {
-    return null;
+    return fallbackProjects[slug] || null;
   }
 }
 
@@ -108,8 +196,7 @@ export default async function PortfolioDetailPage({
           {/* Cover */}
           <Reveal>
             <div className="aspect-video rounded-2xl bg-gradient-to-br from-brand-50 to-brand-100 mb-12 flex items-center justify-center overflow-hidden">
-              {project.cover &&
-              !project.cover.startsWith("/images/placeholder") ? (
+              {project.cover && project.cover.startsWith("http") ? (
                 <img
                   src={project.cover}
                   alt={project.title}

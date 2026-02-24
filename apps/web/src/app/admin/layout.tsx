@@ -9,11 +9,14 @@ import {
   Layers,
   MessageSquare,
   LogOut,
+  Menu,
+  X,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@webkultura/ui";
 
 const adminNav = [
-  { label: "Лиды", href: "/admin", icon: MessageSquare },
+  { label: "Заявки", href: "/admin", icon: MessageSquare },
   { label: "Портфолио", href: "/admin/portfolio", icon: Briefcase },
   { label: "Услуги", href: "/admin/services", icon: Layers },
 ];
@@ -29,6 +32,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
@@ -38,9 +42,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/auth/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/auth/profile`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Unauthorized");
         return res.json();
@@ -52,6 +59,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       })
       .finally(() => setLoading(false));
   }, [pathname, router]);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   if (pathname === "/admin/login") return <>{children}</>;
 
@@ -71,18 +82,38 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 pt-16">
+    <div className="min-h-screen bg-neutral-50 pt-14 lg:pt-16">
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-neutral-200 z-50 flex items-center justify-between px-6">
-        <div className="flex items-center gap-4">
+      <div className="fixed top-0 left-0 right-0 h-14 lg:h-16 bg-white border-b border-neutral-200 z-50 flex items-center justify-between px-4 lg:px-6">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden p-1.5 text-neutral-600 hover:text-neutral-900"
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
           <LayoutDashboard size={20} className="text-brand-600" />
-          <span className="font-semibold text-neutral-900">Веб-Культура Admin</span>
+          <span className="font-semibold text-neutral-900 text-sm lg:text-base">
+            Веб-Культура
+          </span>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-neutral-500">{user.name}</span>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="hidden sm:flex items-center gap-1 text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+          >
+            <ArrowLeft size={14} /> На сайт
+          </Link>
+          <span className="text-sm text-neutral-500 hidden sm:block">
+            {user.name}
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded bg-brand-100 text-brand-700 font-medium hidden sm:block">
+            {user.role}
+          </span>
           <button
             onClick={handleLogout}
             className="p-2 text-neutral-400 hover:text-neutral-600 transition-colors"
+            title="Выход"
           >
             <LogOut size={18} />
           </button>
@@ -90,8 +121,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </div>
 
       <div className="flex">
-        {/* Sidebar */}
-        <aside className="fixed top-16 left-0 bottom-0 w-56 bg-white border-r border-neutral-200 p-4">
+        {/* Sidebar — desktop always visible, mobile as overlay */}
+        {sidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black/30 z-30"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        <aside
+          className={cn(
+            "fixed top-14 lg:top-16 bottom-0 w-56 bg-white border-r border-neutral-200 p-4 z-40 transition-transform lg:translate-x-0",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          )}
+        >
           <nav className="space-y-1">
             {adminNav.map((item) => {
               const Icon = item.icon;
@@ -116,10 +158,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
+
+          {/* Mobile user info */}
+          <div className="lg:hidden mt-6 pt-4 border-t border-neutral-200">
+            <div className="text-sm text-neutral-700 font-medium">{user.name}</div>
+            <div className="text-xs text-neutral-400">{user.email}</div>
+          </div>
         </aside>
 
         {/* Content */}
-        <main className="ml-56 flex-1 p-8">{children}</main>
+        <main className="lg:ml-56 flex-1 p-4 lg:p-8 min-h-[calc(100vh-3.5rem)] lg:min-h-[calc(100vh-4rem)]">
+          {children}
+        </main>
       </div>
     </div>
   );
