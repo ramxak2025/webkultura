@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
+import { PortfolioGrid } from "@/components/sections/portfolio-grid";
 import { Reveal } from "@/components/motion/reveal";
-import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
-import { PortfolioCard } from "@/components/sections/portfolio-card";
 
 export const metadata: Metadata = {
   title: "Портфолио",
@@ -9,77 +8,55 @@ export const metadata: Metadata = {
     "Наши проекты — сайты, интернет-магазины, маркетинговые кампании и дизайн. Смотрите кейсы и результаты работы.",
 };
 
-interface PortfolioProjectData {
+interface PortfolioProject {
   id: string;
   title: string;
   slug: string;
   cover: string;
-  category: string;
+  category: { id: string; name: string; slug: string };
   techStack: string[];
-  metrics: Record<string, string>;
+  metrics: Record<string, string> | null;
 }
 
-// Placeholder projects (will come from API later)
-const projects: PortfolioProjectData[] = [
-  {
-    id: "1",
-    title: "ТехноМаркет — Интернет-магазин",
-    slug: "technomarket",
-    cover: "/images/placeholder-1.svg",
-    category: "Веб-разработка",
-    techStack: ["Next.js", "TypeScript", "PostgreSQL"],
-    metrics: { conversion: "+45%", speed: "95/100" },
-  },
-  {
-    id: "2",
-    title: "ФинансПро — Корпоративный сайт",
-    slug: "finanspro",
-    cover: "/images/placeholder-2.svg",
-    category: "Веб-разработка",
-    techStack: ["React", "Node.js", "Figma"],
-    metrics: { leads: "+120%", bounce: "-30%" },
-  },
-  {
-    id: "3",
-    title: "СтройГрад — Маркетинговая кампания",
-    slug: "stroygrad",
-    cover: "/images/placeholder-3.svg",
-    category: "Маркетинг",
-    techStack: ["Яндекс Директ", "Google Ads", "Analytics"],
-    metrics: { roi: "340%", cpa: "-55%" },
-  },
-  {
-    id: "4",
-    title: "АртСтудия — Фирменный стиль",
-    slug: "artstudio",
-    cover: "/images/placeholder-4.svg",
-    category: "Дизайн",
-    techStack: ["Figma", "Illustrator", "Photoshop"],
-    metrics: { recognition: "+80%" },
-  },
-  {
-    id: "5",
-    title: "ЭкоЛайф — Лендинг",
-    slug: "ecolife",
-    cover: "/images/placeholder-5.svg",
-    category: "Веб-разработка",
-    techStack: ["Next.js", "Framer Motion", "TailwindCSS"],
-    metrics: { conversion: "12%", speed: "98/100" },
-  },
-  {
-    id: "6",
-    title: "ФитнесКлуб — Таргетированная реклама",
-    slug: "fitnessclub",
-    cover: "/images/placeholder-6.svg",
-    category: "Маркетинг",
-    techStack: ["VK Ads", "Telegram Ads", "Analytics"],
-    metrics: { leads: "+200%", cpa: "-40%" },
-  },
-];
+interface PortfolioCategory {
+  id: string;
+  name: string;
+  slug: string;
+  _count: { projects: number };
+}
 
-const categories = ["Все", ...new Set(projects.map((p) => p.category))];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-export default function PortfolioPage() {
+async function getProjects(): Promise<PortfolioProject[]> {
+  try {
+    const res = await fetch(`${API_URL}/portfolio`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+async function getCategories(): Promise<PortfolioCategory[]> {
+  try {
+    const res = await fetch(`${API_URL}/portfolio/categories`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
+}
+
+export default async function PortfolioPage() {
+  const [projects, categories] = await Promise.all([
+    getProjects(),
+    getCategories(),
+  ]);
+
   return (
     <div className="pt-28 pb-24 lg:pt-36 lg:pb-32">
       <div className="container-main">
@@ -95,28 +72,7 @@ export default function PortfolioPage() {
           </div>
         </Reveal>
 
-        {/* Category filters */}
-        <Reveal>
-          <div className="flex flex-wrap gap-2 mb-10">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className="px-4 py-2 rounded-lg text-sm font-medium border border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:border-neutral-300 transition-colors first:bg-brand-600 first:text-white first:border-brand-600"
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </Reveal>
-
-        {/* Projects grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <StaggerItem key={project.id}>
-              <PortfolioCard project={project} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+        <PortfolioGrid projects={projects} categories={categories} />
       </div>
     </div>
   );

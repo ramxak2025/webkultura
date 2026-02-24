@@ -12,6 +12,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { LeadsService } from "./leads.service";
 import { CreateLeadDto } from "./dto/create-lead.dto";
 import { UpdateLeadDto } from "./dto/update-lead.dto";
+import { RolesGuard, Roles } from "../auth/guards/roles.guard";
 
 @Controller("leads")
 export class LeadsController {
@@ -22,7 +23,8 @@ export class LeadsController {
     return this.leadsService.create(dto);
   }
 
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles("ADMIN", "MANAGER")
   @Get()
   findAll(
     @Query("status") status?: string,
@@ -36,13 +38,15 @@ export class LeadsController {
     });
   }
 
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles("ADMIN", "MANAGER")
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.leadsService.findOne(id);
   }
 
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles("ADMIN", "MANAGER")
   @Patch(":id")
   update(@Param("id") id: string, @Body() dto: UpdateLeadDto) {
     return this.leadsService.update(id, dto);
