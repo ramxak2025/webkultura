@@ -1,16 +1,7 @@
 {
-  "version": 2,
-  "buildCommand": "npx prisma generate --schema=../../packages/database/prisma/schema.prisma && npx nest build",
-  "builds": [
-    {
-      "src": "dist/serverless.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "dist/serverless.js"
-    }
+  "installCommand": "cd ../.. && npm install",
+  "buildCommand": "cd ../.. && npx prisma generate --schema=packages/database/prisma/schema.prisma && cd apps/api && npx nest build",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
   ]
 }
