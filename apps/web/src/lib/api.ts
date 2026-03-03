@@ -4,9 +4,20 @@ interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
 }
 
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly statusText: string,
+    message?: string,
+  ) {
+    super(message ?? `API Error: ${status} ${statusText}`);
+    this.name = "ApiError";
+  }
+}
+
 export async function apiFetch<T>(
   endpoint: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<T> {
   const { params, ...fetchOptions } = options;
 
@@ -25,16 +36,16 @@ export async function apiFetch<T>(
   });
 
   if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`);
+    throw new ApiError(res.status, res.statusText);
   }
 
-  return res.json();
+  return res.json() as Promise<T>;
 }
 
 export async function apiPost<T>(
   endpoint: string,
   data: unknown,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<T> {
   return apiFetch<T>(endpoint, {
     ...options,

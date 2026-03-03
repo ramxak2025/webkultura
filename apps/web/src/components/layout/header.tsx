@@ -1,126 +1,105 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
-import { cn } from "@webkultura/ui";
-import { NAV_ITEMS, SITE_NAME } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import { NAV_ITEMS, SITE_NAME } from "@/lib/constants";
 
 export function Header() {
-  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    setIsMobileOpen(false);
   }, [pathname]);
 
   return (
     <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled
-          ? "bg-white/80 backdrop-blur-xl border-b border-neutral-200/50 shadow-sm"
-          : "bg-transparent"
-      )}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "glass-strong py-3" : "bg-transparent py-5"
+      }`}
     >
-      <div className="container-main">
-        <nav className="flex items-center justify-between h-16 lg:h-20">
+      <div className="container-main flex items-center justify-between">
+        <Link href="/" className="relative z-10">
+          <span className="text-xl font-bold gradient-text">{SITE_NAME}</span>
+        </Link>
+
+        <nav className="hidden md:flex items-center gap-8">
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative text-sm font-medium transition-colors ${
+                  isActive ? "text-white" : "text-muted-foreground hover:text-white"
+                }`}
+              >
+                {item.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-indicator"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
           <Link
-            href="/"
-            className="text-xl lg:text-2xl font-bold tracking-tight text-neutral-900"
+            href="/configurator"
+            className="px-5 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-primary/25 hover:scale-105 active:scale-95"
           >
-            {SITE_NAME}
+            Обсудить проект
           </Link>
-
-          {/* Desktop nav */}
-          <ul className="hidden md:flex items-center gap-1">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "relative px-4 py-2 text-sm font-medium rounded-lg transition-colors",
-                    pathname === item.href
-                      ? "text-brand-600"
-                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
-                  )}
-                >
-                  {item.label}
-                  {pathname === item.href && (
-                    <motion.div
-                      layoutId="nav-indicator"
-                      className="absolute bottom-0 left-2 right-2 h-0.5 bg-brand-600 rounded-full"
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/configurator"
-              className="inline-flex items-center justify-center h-10 px-5 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 transition-colors"
-            >
-              Обсудить проект
-            </Link>
-          </div>
-
-          {/* Mobile burger */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-neutral-600 hover:text-neutral-900"
-            aria-label="Меню"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </nav>
+
+        <button
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="md:hidden relative z-10 p-2 text-white"
+          aria-label="Меню"
+        >
+          {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
 
-      {/* Mobile menu overlay */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
+        {isMobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-neutral-200 shadow-lg"
+            className="absolute inset-x-0 top-full glass-strong md:hidden"
           >
-            <div className="container-main py-4 space-y-1">
+            <nav className="container-main py-6 flex flex-col gap-4">
               {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={cn(
-                    "block px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                    pathname === item.href
-                      ? "bg-brand-50 text-brand-600"
-                      : "text-neutral-600 hover:bg-neutral-50"
-                  )}
+                  className={`text-lg font-medium py-2 transition-colors ${
+                    pathname === item.href ? "text-white" : "text-muted-foreground"
+                  }`}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="pt-2">
-                <Link
-                  href="/configurator"
-                  className="block text-center px-4 py-3 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 transition-colors"
-                >
-                  Обсудить проект
-                </Link>
-              </div>
-            </div>
+              <Link
+                href="/configurator"
+                className="mt-2 px-5 py-3 rounded-lg bg-gradient-to-r from-primary to-accent text-center font-semibold text-white"
+              >
+                Обсудить проект
+              </Link>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>

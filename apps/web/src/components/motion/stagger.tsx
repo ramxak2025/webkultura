@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 interface StaggerContainerProps {
-  children: ReactNode;
-  className?: string;
-  staggerDelay?: number;
+  readonly children: ReactNode;
+  readonly className?: string;
+  readonly staggerDelay?: number;
 }
 
 export function StaggerContainer({
@@ -34,8 +34,8 @@ export function StaggerItem({
   children,
   className,
 }: {
-  children: ReactNode;
-  className?: string;
+  readonly children: ReactNode;
+  readonly className?: string;
 }) {
   return (
     <motion.div

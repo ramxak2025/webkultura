@@ -1,144 +1,73 @@
 import type { Metadata } from "next";
-import { PortfolioGrid } from "@/components/sections/portfolio-grid";
+import Link from "next/link";
 import { Reveal } from "@/components/motion/reveal";
+import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
+import { PORTFOLIO_PROJECTS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Портфолио",
   description:
-    "Наши проекты — сайты, интернет-магазины, маркетинговые кампании и дизайн. Смотрите кейсы и результаты работы.",
+    "Наши проекты — сайты, интернет-магазины, маркетинговые кампании и дизайн. Кейсы и результаты работы.",
 };
 
-interface PortfolioProject {
-  id: string;
-  title: string;
-  slug: string;
-  cover: string;
-  category: { id: string; name: string; slug: string };
-  techStack: string[];
-  metrics: Record<string, string> | null;
-}
-
-interface PortfolioCategory {
-  id: string;
-  name: string;
-  slug: string;
-  _count: { projects: number };
-}
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-// Fallback data for when API is unavailable
-const fallbackCategories: PortfolioCategory[] = [
-  { id: "cat-web", name: "Веб-разработка", slug: "web-development", _count: { projects: 3 } },
-  { id: "cat-marketing", name: "Маркетинг", slug: "marketing", _count: { projects: 2 } },
-  { id: "cat-design", name: "Дизайн", slug: "design", _count: { projects: 1 } },
-];
-
-const fallbackProjects: PortfolioProject[] = [
-  {
-    id: "1",
-    title: "ТехноМаркет — Интернет-магазин",
-    slug: "technomarket",
-    cover: "",
-    category: { id: "cat-web", name: "Веб-разработка", slug: "web-development" },
-    techStack: ["Next.js", "TypeScript", "PostgreSQL"],
-    metrics: { "Конверсия": "+45%", "Скорость": "95/100" },
-  },
-  {
-    id: "2",
-    title: "ФинансПро — Корпоративный сайт",
-    slug: "finanspro",
-    cover: "",
-    category: { id: "cat-web", name: "Веб-разработка", slug: "web-development" },
-    techStack: ["React", "Node.js", "Figma"],
-    metrics: { "Лиды": "+120%", "Отказы": "-30%" },
-  },
-  {
-    id: "3",
-    title: "СтройГрад — Маркетинговая кампания",
-    slug: "stroygrad",
-    cover: "",
-    category: { id: "cat-marketing", name: "Маркетинг", slug: "marketing" },
-    techStack: ["Яндекс Директ", "Google Ads", "Analytics"],
-    metrics: { "ROI": "340%", "CPA": "-55%" },
-  },
-  {
-    id: "4",
-    title: "АртСтудия — Фирменный стиль",
-    slug: "artstudio",
-    cover: "",
-    category: { id: "cat-design", name: "Дизайн", slug: "design" },
-    techStack: ["Figma", "Illustrator", "Photoshop"],
-    metrics: { "Узнаваемость": "+80%" },
-  },
-  {
-    id: "5",
-    title: "ЭкоЛайф — Лендинг",
-    slug: "ecolife",
-    cover: "",
-    category: { id: "cat-web", name: "Веб-разработка", slug: "web-development" },
-    techStack: ["Next.js", "Framer Motion", "TailwindCSS"],
-    metrics: { "Конверсия": "12%", "Скорость": "98/100" },
-  },
-  {
-    id: "6",
-    title: "ФитнесКлуб — Таргетированная реклама",
-    slug: "fitnessclub",
-    cover: "",
-    category: { id: "cat-marketing", name: "Маркетинг", slug: "marketing" },
-    techStack: ["VK Ads", "Telegram Ads", "Analytics"],
-    metrics: { "Лиды": "+200%", "CPA": "-40%" },
-  },
-];
-
-async function getProjects(): Promise<PortfolioProject[]> {
-  try {
-    const res = await fetch(`${API_URL}/portfolio`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return fallbackProjects;
-    const data = await res.json();
-    return data.length > 0 ? data : fallbackProjects;
-  } catch {
-    return fallbackProjects;
-  }
-}
-
-async function getCategories(): Promise<PortfolioCategory[]> {
-  try {
-    const res = await fetch(`${API_URL}/portfolio/categories`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return fallbackCategories;
-    const data = await res.json();
-    return data.length > 0 ? data : fallbackCategories;
-  } catch {
-    return fallbackCategories;
-  }
-}
-
-export default async function PortfolioPage() {
-  const [projects, categories] = await Promise.all([
-    getProjects(),
-    getCategories(),
-  ]);
-
+export default function PortfolioPage() {
   return (
     <div className="pt-28 pb-24 lg:pt-36 lg:pb-32">
       <div className="container-main">
         <Reveal>
-          <div className="max-w-2xl mb-12">
-            <h1 className="text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
-              Портфолио
+          <div className="max-w-3xl mb-16">
+            <span className="text-sm font-medium text-primary mb-4 block">Портфолио</span>
+            <h1 className="text-4xl lg:text-6xl font-bold mb-6">
+              Проекты, которыми мы{" "}
+              <span className="gradient-text">гордимся</span>
             </h1>
-            <p className="text-lg text-neutral-500">
-              Проекты, которыми мы гордимся. Каждый кейс — это решённая задача
-              и измеримый результат для клиента.
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Каждый кейс — это решённая задача и измеримый результат для клиента.
             </p>
           </div>
         </Reveal>
 
-        <PortfolioGrid projects={projects} categories={categories} />
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PORTFOLIO_PROJECTS.map((project) => (
+            <StaggerItem key={project.id}>
+              <Link
+                href={`/portfolio/${project.slug}`}
+                className="group block rounded-2xl overflow-hidden glass transition-all duration-500 hover:glow-md"
+              >
+                <div className={`aspect-video bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-colors duration-500" />
+                  <div className="absolute bottom-4 left-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
+                      {project.category}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-white mb-3 group-hover:text-primary transition-colors">
+                    {project.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.techStack.slice(0, 3).map((tech) => (
+                      <span key={tech} className="px-2 py-1 rounded-md text-xs bg-secondary text-muted-foreground">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  {project.metrics && (
+                    <div className="flex gap-4 pt-4 border-t border-border/50">
+                      {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
+                        <div key={key}>
+                          <div className="text-sm font-semibold gradient-text">{value}</div>
+                          <div className="text-xs text-muted-foreground">{key}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
       </div>
     </div>
   );

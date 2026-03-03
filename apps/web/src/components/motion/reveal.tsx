@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 interface RevealProps {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-  direction?: "up" | "down" | "left" | "right";
+  readonly children: ReactNode;
+  readonly className?: string;
+  readonly delay?: number;
+  readonly direction?: "up" | "down" | "left" | "right";
 }
 
-const directionOffset = {
+const directionOffset: Record<string, { x: number; y: number }> = {
   up: { y: 40, x: 0 },
   down: { y: -40, x: 0 },
   left: { y: 0, x: -40 },

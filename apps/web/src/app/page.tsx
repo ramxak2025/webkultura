@@ -1,34 +1,39 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Code, Megaphone, Palette, Zap, TrendingUp, Shield } from "lucide-react";
+import { ArrowRight, Code2, TrendingUp, Palette, Zap, Shield, Target } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
 import { HeroSection } from "@/components/sections/hero";
+import { TestimonialsSection } from "@/components/sections/testimonials";
+import { PORTFOLIO_PROJECTS } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Веб-Культура — Digital студия полного цикла",
+  title: "Веб-Культура — Digital-агентство полного цикла",
   description:
-    "Разработка сайтов, маркетинг, дизайн и продвижение бизнеса в интернете. Создаём цифровые продукты, которые приносят результат.",
+    "Создаём сайты, запускаем рекламу, разрабатываем бренды. Современные технологии, прозрачные процессы, измеримый результат.",
 };
 
 const services = [
   {
-    icon: Code,
-    title: "Веб-разработка",
-    description: "Корпоративные сайты, интернет-магазины и лендинги на современных технологиях",
-    href: "/services#web-development",
+    icon: Code2,
+    title: "Разработка",
+    description: "Сайты и веб-приложения на React, Next.js, Node.js. Быстро, масштабируемо, надёжно.",
+    href: "/services",
+    gradient: "from-violet-500 to-purple-500",
   },
   {
-    icon: Megaphone,
+    icon: TrendingUp,
     title: "Маркетинг",
-    description: "Яндекс Директ, VK Реклама, Telegram Ads и SEO-продвижение",
-    href: "/services#marketing",
+    description: "Яндекс Директ, таргет, SEO, контент. Привлекаем клиентов и увеличиваем продажи.",
+    href: "/services",
+    gradient: "from-blue-500 to-cyan-500",
   },
   {
     icon: Palette,
     title: "Дизайн",
-    description: "UI/UX дизайн интерфейсов и разработка фирменного стиля",
-    href: "/services#design",
+    description: "UI/UX, брендинг, фирменный стиль. Создаём визуальные решения, которые запоминаются.",
+    href: "/services",
+    gradient: "from-pink-500 to-rose-500",
   },
 ];
 
@@ -36,17 +41,17 @@ const advantages = [
   {
     icon: Zap,
     title: "Скорость",
-    description: "Запускаем проекты в кратчайшие сроки без потери качества",
+    description: "Запускаем проекты в кратчайшие сроки. Прототип за 3 дня, MVP за 2 недели.",
   },
   {
-    icon: TrendingUp,
+    icon: Target,
     title: "Результат",
-    description: "Фокус на метриках и конверсиях, а не абстрактной красоте",
+    description: "Фокус на бизнес-метриках. Каждое решение подкреплено данными и аналитикой.",
   },
   {
     icon: Shield,
     title: "Надёжность",
-    description: "Современный стек, чистый код, поддержка после запуска",
+    description: "Современный стек, чистый код, SLA. Поддержка и развитие после запуска.",
   },
 ];
 
@@ -56,36 +61,38 @@ export default function HomePage() {
       <HeroSection />
 
       {/* Services */}
-      <section className="py-24 lg:py-32">
+      <section className="py-24 lg:py-32 relative">
         <div className="container-main">
           <Reveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-neutral-900 mb-4">
-                Наши услуги
+              <span className="text-sm font-medium text-primary mb-4 block">Что мы делаем</span>
+              <h2 className="text-3xl lg:text-5xl font-bold mb-4">
+                Полный цикл{" "}
+                <span className="gradient-text">digital-услуг</span>
               </h2>
-              <p className="text-lg text-neutral-500">
-                Комплексный подход к вашему digital-присутствию
+              <p className="text-lg text-muted-foreground">
+                От идеи до результата. Комплексный подход к вашему digital-присутствию.
               </p>
             </div>
           </Reveal>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {services.map((service) => {
               const Icon = service.icon;
               return (
                 <StaggerItem key={service.title}>
                   <Link
                     href={service.href}
-                    className="group block p-8 rounded-2xl border border-neutral-200 bg-white hover:border-brand-200 hover:shadow-lg hover:shadow-brand-100/50 transition-all duration-300"
+                    className="group block p-8 rounded-2xl glass hover:glow-sm transition-all duration-500"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center mb-5 group-hover:bg-brand-100 transition-colors">
-                      <Icon size={24} />
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 transition-transform group-hover:scale-110`}>
+                      <Icon size={24} className="text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+                    <h3 className="text-xl font-semibold text-white mb-3">
                       {service.title}
                     </h3>
-                    <p className="text-neutral-500 mb-4">{service.description}</p>
-                    <span className="inline-flex items-center gap-1 text-sm font-medium text-brand-600 group-hover:gap-2 transition-all">
+                    <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
+                    <span className="inline-flex items-center gap-1 text-sm font-medium text-primary group-hover:gap-2 transition-all">
                       Подробнее <ArrowRight size={16} />
                     </span>
                   </Link>
@@ -96,16 +103,83 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Featured projects */}
+      <section className="py-24 lg:py-32 relative">
+        <div className="absolute inset-0 mesh-gradient opacity-50 -z-10" />
+        <div className="container-main">
+          <Reveal>
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <span className="text-sm font-medium text-primary mb-4 block">Портфолио</span>
+                <h2 className="text-3xl lg:text-5xl font-bold">
+                  Избранные{" "}
+                  <span className="gradient-text">проекты</span>
+                </h2>
+              </div>
+              <Link
+                href="/portfolio"
+                className="hidden sm:inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all"
+              >
+                Все проекты <ArrowRight size={16} />
+              </Link>
+            </div>
+          </Reveal>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {PORTFOLIO_PROJECTS.slice(0, 3).map((project) => (
+              <StaggerItem key={project.id}>
+                <Link
+                  href={`/portfolio/${project.slug}`}
+                  className="group block rounded-2xl overflow-hidden glass transition-all duration-500 hover:glow-md"
+                >
+                  <div className={`aspect-video bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
+                        {project.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-primary transition-colors">
+                      {project.title}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {project.techStack.slice(0, 3).map((tech) => (
+                        <span key={tech} className="px-2 py-1 rounded-md text-xs bg-secondary text-muted-foreground">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+
+          <div className="sm:hidden mt-8 text-center">
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary"
+            >
+              Все проекты <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Advantages */}
-      <section className="py-24 lg:py-32 bg-neutral-50">
+      <section className="py-24 lg:py-32">
         <div className="container-main">
           <Reveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold text-neutral-900 mb-4">
-                Почему мы
+              <span className="text-sm font-medium text-primary mb-4 block">Почему мы</span>
+              <h2 className="text-3xl lg:text-5xl font-bold mb-4">
+                Не просто код —{" "}
+                <span className="gradient-text">результат</span>
               </h2>
-              <p className="text-lg text-neutral-500">
-                Мы не просто пишем код — мы создаём продукты, которые работают на ваш бизнес
+              <p className="text-lg text-muted-foreground">
+                Мы создаём продукты, которые работают на ваш бизнес
               </p>
             </div>
           </Reveal>
@@ -115,14 +189,14 @@ export default function HomePage() {
               const Icon = item.icon;
               return (
                 <StaggerItem key={item.title}>
-                  <div className="text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto mb-5">
-                      <Icon size={28} />
+                  <div className="text-center p-8">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center mx-auto mb-6">
+                      <Icon size={28} className="text-white" />
                     </div>
-                    <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+                    <h3 className="text-xl font-semibold text-white mb-3">
                       {item.title}
                     </h3>
-                    <p className="text-neutral-500">{item.description}</p>
+                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                   </div>
                 </StaggerItem>
               );
@@ -131,52 +205,35 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <TestimonialsSection />
+
       {/* CTA */}
       <section className="py-24 lg:py-32">
         <div className="container-main">
           <Reveal>
-            <div className="relative overflow-hidden rounded-3xl bg-brand-600 p-10 lg:p-16 text-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-brand-500 to-brand-800 opacity-90" />
+            <div className="relative overflow-hidden rounded-3xl p-10 lg:p-16 text-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600" />
+              <div className="absolute inset-0 dot-pattern opacity-20" />
               <div className="relative z-10">
-                <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+                <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4">
                   Готовы обсудить проект?
                 </h2>
-                <p className="text-brand-100 text-lg mb-8 max-w-xl mx-auto">
-                  Воспользуйтесь конфигуратором услуг — подберите нужные решения
-                  и получите предварительную оценку
+                <p className="text-violet-100 text-lg mb-8 max-w-xl mx-auto">
+                  Подберите нужные услуги и получите предварительную оценку с помощью нашего конфигуратора
                 </p>
                 <Link
                   href="/configurator"
-                  className="inline-flex items-center gap-2 h-12 px-8 bg-white text-brand-700 font-semibold rounded-lg hover:bg-brand-50 transition-colors"
+                  className="group inline-flex items-center gap-2 h-14 px-8 bg-white text-violet-700 font-semibold rounded-xl hover:bg-violet-50 transition-all hover:scale-105 active:scale-95"
                 >
-                  Подобрать услуги <ArrowRight size={18} />
+                  Подобрать услуги
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
           </Reveal>
         </div>
       </section>
-
-      {/* JSON-LD structured data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "Веб-Культура",
-            description:
-              "Digital студия полного цикла. Разработка сайтов, маркетинг, дизайн.",
-            url: process.env.NEXT_PUBLIC_SITE_URL || "https://webkultura.ru",
-            contactPoint: {
-              "@type": "ContactPoint",
-              telephone: "+7-999-000-00-00",
-              contactType: "customer service",
-              availableLanguage: "Russian",
-            },
-          }),
-        }}
-      />
     </>
   );
 }
