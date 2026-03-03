@@ -7,12 +7,13 @@ COPY apps/web/package.json ./apps/web/
 COPY packages/ui/package.json ./packages/ui/
 COPY packages/config/package.json ./packages/config/
 COPY packages/database/package.json ./packages/database/
-RUN npm install --workspace=apps/web --workspace=packages/ui --workspace=packages/database
+RUN npm install
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
 RUN npm run build --workspace=apps/web
 
 FROM base AS runner
