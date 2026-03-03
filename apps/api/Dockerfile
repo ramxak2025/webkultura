@@ -13,6 +13,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
 RUN npm run build --workspace=apps/api
+RUN npm prune --omit=dev
 
 FROM base AS runner
 ENV NODE_ENV=production
