@@ -14,7 +14,7 @@ export default async function PortfolioPage() {
   const projects = await getPortfolioProjects();
 
   return (
-    <div className="h-full md:overflow-auto p-3">
+    <div className="h-full md:overflow-auto p-4">
       <div className="panel p-6 mb-3">
         <Reveal>
           <h1 className="text-3xl font-bold text-gray-900">

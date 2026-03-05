@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ConfiguratorPage() {
   return (
-    <div className="h-full md:overflow-auto p-3">
+    <div className="h-full md:overflow-auto p-4">
       <div className="max-w-4xl mx-auto">
         <ConfiguratorWizard />
       </div>

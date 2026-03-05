@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { DesktopNav } from "@/components/layout/desktop-nav";
 import { VantaClouds } from "@/components/vanta-clouds";
 
 const inter = Inter({
@@ -82,16 +82,38 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="font-sans antialiased relative">
         <VantaClouds />
-        <div className="relative z-10 md:h-screen md:h-dvh md:overflow-hidden md:flex md:flex-col">
-          <Header />
-          <main className="flex-1 md:overflow-hidden relative">
-            {children}
-          </main>
-          <div className="md:block hidden">
-            <Footer />
+        {/* Desktop: single metro window */}
+        <div className="relative z-10 hidden md:flex flex-col h-screen h-dvh p-4">
+          <div className="metro-window flex flex-col flex-1 min-h-0">
+            {/* Top bar: logo + nav */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/20 shrink-0">
+              <a href="/" className="flex items-center gap-2.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://i.ibb.co/39qPb4f7/logo-icon.png"
+                  alt="Веб-Культура"
+                  className="h-7 w-auto"
+                />
+                <span className="text-base font-bold gradient-text tracking-tight">Веб-Культура</span>
+              </a>
+              <DesktopNav />
+            </div>
+            {/* Content area */}
+            <main className="flex-1 overflow-auto metro-content">
+              {children}
+            </main>
+            {/* Inline footer */}
+            <div className="border-t border-white/20 shrink-0">
+              <Footer />
+            </div>
           </div>
         </div>
-        <div className="md:hidden pb-20">
+
+        {/* Mobile: scrollable */}
+        <div className="relative z-10 md:hidden min-h-screen flex flex-col">
+          <main className="flex-1">
+            {children}
+          </main>
           <Footer />
         </div>
         <MobileNav />

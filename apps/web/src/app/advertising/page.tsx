@@ -94,7 +94,7 @@ export default function AdvertisingPage() {
   return (
     <div className="h-full md:overflow-auto">
       {/* Desktop single-screen layout */}
-      <div className="hidden md:block p-3 min-h-full">
+      <div className="hidden md:block p-4 min-h-full">
         {/* Header panel */}
         <div className="panel p-6 mb-3">
           <div className="flex items-center justify-between">

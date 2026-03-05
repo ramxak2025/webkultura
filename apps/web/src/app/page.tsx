@@ -53,21 +53,19 @@ export default async function HomePage() {
   const featuredProjects = projects.slice(0, 3);
 
   return (
-    <div className="h-full md:p-3 md:overflow-hidden">
-      {/* Desktop: Grid layout, all on one screen */}
-      <div className="hidden md:grid h-full gap-3 grid-cols-4 grid-rows-[auto_1fr_1fr]">
-        {/* Hero panel — full width top */}
-        <div className="col-span-4 panel p-6 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-                Создаём <span className="gradient-text">цифровые продукты</span>,
-                <br />которые приносят результат
-              </h1>
-              <p className="text-gray-500 mt-2 max-w-xl">
-                Разработка, маркетинг, дизайн и реклама. Полный цикл от стратегии до запуска.
-              </p>
-            </div>
+    <div className="h-full">
+      {/* Desktop: bento grid inside metro window */}
+      <div className="hidden md:grid h-full gap-3 p-4 grid-cols-4 grid-rows-[auto_1fr_1fr]">
+        {/* Hero tile — full width */}
+        <div className="col-span-4 tile p-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+              Создаём <span className="gradient-text">цифровые продукты</span>,
+              <br />которые приносят результат
+            </h1>
+            <p className="text-gray-500 mt-2 max-w-xl">
+              Разработка, маркетинг, дизайн и реклама. Полный цикл от стратегии до запуска.
+            </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
             <Link
@@ -79,15 +77,15 @@ export default async function HomePage() {
             </Link>
             <Link
               href="/portfolio"
-              className="inline-flex items-center justify-center h-12 px-6 glass rounded-xl font-semibold text-gray-700 transition-all hover:bg-white/70"
+              className="inline-flex items-center justify-center h-12 px-6 rounded-xl font-semibold text-gray-700 bg-white/50 border border-white/60 transition-all hover:bg-white/80"
             >
               Портфолио
             </Link>
           </div>
         </div>
 
-        {/* Stats bar */}
-        <div className="col-span-1 panel p-4 flex flex-col justify-center gap-3">
+        {/* Stats */}
+        <div className="col-span-1 tile p-4 flex flex-col justify-center gap-3">
           {STATS.map((stat) => (
             <div key={stat.label} className="flex items-baseline gap-2">
               <span className="text-2xl font-bold gradient-text">
@@ -98,9 +96,9 @@ export default async function HomePage() {
           ))}
         </div>
 
-        {/* Services grid */}
-        <div className="col-span-2 panel p-4">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Услуги</h2>
+        {/* Services */}
+        <div className="col-span-2 tile p-4">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Услуги</h2>
           <div className="grid grid-cols-2 gap-2 h-[calc(100%-2rem)]">
             {services.map((service) => {
               const Icon = service.icon;
@@ -124,8 +122,8 @@ export default async function HomePage() {
         </div>
 
         {/* Advantages */}
-        <div className="col-span-1 panel p-4 flex flex-col justify-between">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Почему мы</h2>
+        <div className="col-span-1 tile p-4 flex flex-col justify-between">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Почему мы</h2>
           <div className="flex flex-col gap-3 flex-1 justify-center">
             {advantages.map((item) => {
               const Icon = item.icon;
@@ -144,10 +142,10 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Featured projects row */}
-        <div className="col-span-3 panel p-4">
+        {/* Projects */}
+        <div className="col-span-3 tile p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Проекты</h2>
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Проекты</h2>
             <Link href="/portfolio" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
               Все <ArrowRight size={12} />
             </Link>
@@ -188,8 +186,8 @@ export default async function HomePage() {
         </div>
 
         {/* Testimonial */}
-        <div className="col-span-1 panel p-4 flex flex-col justify-between">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Отзывы</h2>
+        <div className="col-span-1 tile p-4 flex flex-col justify-between">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Отзывы</h2>
           {TESTIMONIALS.slice(0, 1).map((t) => (
             <div key={t.name} className="flex-1 flex flex-col justify-center">
               <p className="text-sm text-gray-600 italic leading-relaxed">
@@ -204,9 +202,8 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Mobile: Scrollable layout */}
+      {/* Mobile: scrollable */}
       <div className="md:hidden">
-        {/* Mobile Hero */}
         <section className="px-4 pt-6 pb-8">
           <div className="glass rounded-2xl p-6">
             <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-3">
@@ -234,7 +231,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Mobile Stats */}
         <section className="px-4 pb-6">
           <div className="grid grid-cols-2 gap-3">
             {STATS.map((stat) => (
@@ -248,7 +244,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Mobile Services */}
         <section className="px-4 pb-6">
           <h2 className="text-lg font-bold text-gray-800 mb-3">Услуги</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -271,7 +266,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Mobile Projects */}
         <section className="px-4 pb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold text-gray-800">Проекты</h2>
@@ -299,7 +293,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Mobile CTA */}
         <section className="px-4 pb-8">
           <div className="relative overflow-hidden rounded-2xl p-8 text-center">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600" />

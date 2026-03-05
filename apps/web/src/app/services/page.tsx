@@ -15,7 +15,7 @@ export default async function ServicesPage() {
   const categories = await getServices();
 
   return (
-    <div className="h-full md:overflow-auto p-3 md:p-3">
+    <div className="h-full md:overflow-auto p-4">
       <div className="panel p-6 mb-3">
         <div className="flex items-center justify-between">
           <div>
