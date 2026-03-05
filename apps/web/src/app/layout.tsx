@@ -5,7 +5,6 @@ import "./globals.css";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { DesktopNav } from "@/components/layout/desktop-nav";
-import { VantaClouds } from "@/components/vanta-clouds";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -80,21 +79,26 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="font-sans antialiased relative">
-        <VantaClouds />
+      <body className="font-sans antialiased relative bg-white">
+        {/* Subtle grid + floating orbs background */}
+        <div className="grid-bg" aria-hidden="true">
+          <div className="orb w-[500px] h-[500px] bg-indigo-200/30 -top-40 -left-40" style={{ animationDelay: "0s" }} />
+          <div className="orb w-[400px] h-[400px] bg-blue-200/20 top-1/2 -right-32" style={{ animationDelay: "5s" }} />
+          <div className="orb w-[300px] h-[300px] bg-purple-200/20 -bottom-20 left-1/3" style={{ animationDelay: "10s" }} />
+        </div>
+
         {/* Desktop: single metro window */}
         <div className="relative z-10 hidden md:flex flex-col h-screen h-dvh p-4">
           <div className="metro-window flex flex-col flex-1 min-h-0">
-            {/* Top bar: logo + nav */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-white/20 shrink-0">
-              <a href="/" className="flex items-center gap-2.5">
+            {/* Top bar: horizontal logo + nav */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 shrink-0">
+              <a href="/" className="flex items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://i.ibb.co/39qPb4f7/logo-icon.png"
+                  src="https://i.ibb.co/kgRGc9Yx/logo-horizontal.png"
                   alt="Веб-Культура"
                   className="h-7 w-auto"
                 />
-                <span className="text-base font-bold gradient-text tracking-tight">Веб-Культура</span>
               </a>
               <DesktopNav />
             </div>
@@ -103,14 +107,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               {children}
             </main>
             {/* Inline footer */}
-            <div className="border-t border-white/20 shrink-0">
+            <div className="border-t border-gray-100 shrink-0">
               <Footer />
             </div>
           </div>
         </div>
 
-        {/* Mobile: scrollable */}
-        <div className="relative z-10 md:hidden min-h-screen flex flex-col">
+        {/* Mobile: full-screen metro layout */}
+        <div className="relative z-10 md:hidden min-h-screen min-h-dvh flex flex-col">
           <main className="flex-1">
             {children}
           </main>

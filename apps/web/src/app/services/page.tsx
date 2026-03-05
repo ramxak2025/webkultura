@@ -57,7 +57,7 @@ export default async function ServicesPage() {
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {category.services.map((service) => (
                 <StaggerItem key={service.title}>
-                  <div className="group p-4 rounded-xl bg-white/40 border border-white/50 hover:bg-white/70 hover:shadow-md transition-all duration-300">
+                  <div className="group p-4 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-md hover:border-gray-200 transition-all duration-300 hover:-translate-y-0.5">
                     <h3 className="font-semibold text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">
                       {service.title}
                     </h3>

@@ -147,7 +147,7 @@ export default function AdvertisingPage() {
                 })}
               </div>
 
-              <div className="mt-auto p-3 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100">
+              <div className="mt-auto p-3 rounded-xl bg-indigo-50 border border-indigo-100">
                 <div className="text-2xl font-bold gradient-text">{platform.caseStudy.metric}</div>
                 <div className="text-xs text-gray-500">{platform.caseStudy.label} / {platform.caseStudy.client}</div>
               </div>
@@ -162,7 +162,7 @@ export default function AdvertisingPage() {
             {additionalChannels.map((ch) => {
               const Icon = ch.icon;
               return (
-                <div key={ch.name} className="flex items-center gap-3 p-3 rounded-xl bg-white/40 border border-white/50">
+                <div key={ch.name} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
                   <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shrink-0">
                     <Icon size={18} className="text-white" />
                   </div>
@@ -179,7 +179,7 @@ export default function AdvertisingPage() {
 
       {/* Mobile layout */}
       <div className="md:hidden px-4 pt-6 pb-8 space-y-6">
-        <div className="glass rounded-2xl p-6">
+        <div className="tile rounded-2xl p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Рекламные <span className="gradient-text">платформы</span>
           </h1>
@@ -189,7 +189,7 @@ export default function AdvertisingPage() {
         </div>
 
         {platforms.map((platform) => (
-          <div key={platform.name} className="glass rounded-2xl p-5">
+          <div key={platform.name} className="tile rounded-2xl p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${platform.gradient} flex items-center justify-center overflow-hidden`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -224,20 +224,20 @@ export default function AdvertisingPage() {
               ))}
             </ul>
 
-            <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100">
+            <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
               <div className="text-2xl font-bold gradient-text">{platform.caseStudy.metric}</div>
               <div className="text-xs text-gray-500">{platform.caseStudy.label} / {platform.caseStudy.client}</div>
             </div>
           </div>
         ))}
 
-        <div className="glass rounded-2xl p-5">
+        <div className="tile rounded-2xl p-5">
           <h2 className="text-lg font-bold text-gray-800 mb-3">Другие каналы</h2>
           <div className="grid grid-cols-2 gap-3">
             {additionalChannels.map((ch) => {
               const Icon = ch.icon;
               return (
-                <div key={ch.name} className="flex items-center gap-2 p-3 rounded-xl bg-white/40 border border-white/50">
+                <div key={ch.name} className="flex items-center gap-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shrink-0">
                     <Icon size={16} className="text-white" />
                   </div>

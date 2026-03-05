@@ -31,7 +31,7 @@ export default async function PortfolioPage() {
           <StaggerItem key={project.id}>
             <Link
               href={`/portfolio/${project.slug}`}
-              className="group block rounded-2xl overflow-hidden panel transition-all duration-500 hover:glow-md"
+              className="group block rounded-2xl overflow-hidden panel transition-all duration-500 hover:glow-md hover:-translate-y-1"
             >
               <div className={`aspect-video bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
                 {project.cover && (
@@ -39,7 +39,7 @@ export default async function PortfolioPage() {
                   <img src={project.cover} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
                 )}
                 <div className="absolute bottom-3 left-3">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/80 text-gray-700 backdrop-blur-sm">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/90 text-gray-700 shadow-sm">
                     {project.category}
                   </span>
                 </div>
@@ -50,7 +50,7 @@ export default async function PortfolioPage() {
                 </h3>
                 <div className="flex flex-wrap gap-1 mb-3">
                   {project.techStack.slice(0, 3).map((tech) => (
-                    <span key={tech} className="px-1.5 py-0.5 rounded text-[10px] bg-gray-100 text-gray-500">
+                    <span key={tech} className="px-1.5 py-0.5 rounded text-[10px] bg-gray-50 text-gray-500 border border-gray-100">
                       {tech}
                     </span>
                   ))}

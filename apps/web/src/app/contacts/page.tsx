@@ -33,7 +33,7 @@ export default function ContactsPage() {
           {contactMethods.map((method) => {
             const Icon = method.icon;
             const content = (
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-white/40 border border-white/50 hover:bg-white/70 hover:shadow-md transition-all duration-300">
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-md hover:border-gray-200 transition-all duration-300 hover:-translate-y-0.5">
                 <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${method.gradient} flex items-center justify-center shrink-0`}>
                   <Icon size={18} className="text-white" />
                 </div>

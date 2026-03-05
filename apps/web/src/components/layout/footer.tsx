@@ -54,7 +54,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-gray-200/30 flex items-center justify-between">
+        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
           <p className="text-[10px] text-gray-400">
             &copy; {new Date().getFullYear()} {SITE_NAME}
           </p>

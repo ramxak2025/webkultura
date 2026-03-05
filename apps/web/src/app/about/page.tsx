@@ -47,7 +47,7 @@ export default function AboutPage() {
               const Icon = value.icon;
               return (
                 <StaggerItem key={value.title}>
-                  <div className="flex gap-3 p-3 rounded-xl bg-white/40 border border-white/50 hover:bg-white/70 transition-all">
+                  <div className="flex gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-sm hover:border-gray-200 transition-all duration-300">
                     <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${value.gradient} flex items-center justify-center shrink-0`}>
                       <Icon size={20} className="text-white" />
                     </div>
@@ -68,7 +68,7 @@ export default function AboutPage() {
             <StaggerContainer className="grid grid-cols-2 gap-3">
               {TEAM_MEMBERS.map((member) => (
                 <StaggerItem key={member.name}>
-                  <div className="text-center p-3 rounded-xl bg-white/40 border border-white/50">
+                  <div className="text-center p-3 rounded-xl bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-sm transition-all duration-300">
                     <div className={`w-14 h-14 mx-auto rounded-full bg-gradient-to-br ${member.gradient} flex items-center justify-center mb-2`}>
                       <span className="text-lg font-bold text-white">{member.name[0]}</span>
                     </div>
