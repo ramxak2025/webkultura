@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { NAV_ITEMS, SITE_NAME } from "@/lib/constants";
+import { NAV_ITEMS } from "@/lib/constants";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,18 +22,26 @@ export function Header() {
     setIsMobileOpen(false);
   }, [pathname]);
 
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "glass-strong py-3" : "bg-transparent py-5"
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "glass-strong py-2" : "py-3 bg-transparent"
       }`}
     >
       <div className="container-main flex items-center justify-between">
-        <Link href="/" className="relative z-10">
-          <span className="text-xl font-bold gradient-text">{SITE_NAME}</span>
+        <Link href="/" className="relative z-10 flex items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://i.ibb.co/39qPb4f7/logo-icon.png"
+            alt="Веб-Культура"
+            className="h-8 w-auto"
+          />
+          <span className="hidden sm:inline text-lg font-bold gradient-text">Веб-Культура</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-6">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -41,14 +49,14 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={`relative text-sm font-medium transition-colors ${
-                  isActive ? "text-white" : "text-muted-foreground hover:text-white"
+                  isActive ? "text-gray-900" : "text-gray-500 hover:text-gray-900"
                 }`}
               >
                 {item.label}
                 {isActive && (
                   <motion.span
                     layoutId="nav-indicator"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent rounded-full"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -56,8 +64,23 @@ export function Header() {
             );
           })}
           <Link
+            href="/advertising"
+            className={`relative text-sm font-medium transition-colors ${
+              pathname === "/advertising" ? "text-gray-900" : "text-gray-500 hover:text-gray-900"
+            }`}
+          >
+            Реклама
+            {pathname === "/advertising" && (
+              <motion.span
+                layoutId="nav-indicator"
+                className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full"
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              />
+            )}
+          </Link>
+          <Link
             href="/configurator"
-            className="px-5 py-2 rounded-lg bg-gradient-to-r from-primary to-accent text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-primary/25 hover:scale-105 active:scale-95"
+            className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-105 active:scale-95"
           >
             Обсудить проект
           </Link>
@@ -65,7 +88,7 @@ export function Header() {
 
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="md:hidden relative z-10 p-2 text-white"
+          className="md:hidden relative z-10 p-2 text-gray-700"
           aria-label="Меню"
         >
           {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -87,15 +110,23 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   className={`text-lg font-medium py-2 transition-colors ${
-                    pathname === item.href ? "text-white" : "text-muted-foreground"
+                    pathname === item.href ? "text-gray-900" : "text-gray-500"
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
               <Link
+                href="/advertising"
+                className={`text-lg font-medium py-2 transition-colors ${
+                  pathname === "/advertising" ? "text-gray-900" : "text-gray-500"
+                }`}
+              >
+                Реклама
+              </Link>
+              <Link
                 href="/configurator"
-                className="mt-2 px-5 py-3 rounded-lg bg-gradient-to-r from-primary to-accent text-center font-semibold text-white"
+                className="mt-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-center font-semibold text-white"
               >
                 Обсудить проект
               </Link>

@@ -14,104 +14,63 @@ export const metadata: Metadata = {
 export default async function ServicesPage() {
   const categories = await getServices();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: categories.map((cat, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: cat.title,
-      description: cat.description,
-    })),
-  };
-
   return (
-    <div className="pt-28 pb-24 lg:pt-36 lg:pb-32">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <div className="container-main">
-        <Reveal>
-          <div className="max-w-3xl mb-20">
-            <span className="text-sm font-medium text-primary mb-4 block">Услуги</span>
-            <h1 className="text-4xl lg:text-6xl font-bold mb-6">
-              Полный спектр{" "}
-              <span className="gradient-text">digital-услуг</span>
+    <div className="h-full md:overflow-auto p-3 md:p-3">
+      <div className="panel p-6 mb-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Полный спектр <span className="gradient-text">digital-услуг</span>
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              От стратегии до реализации. Подберите нужные решения или{" "}
-              <Link href="/configurator" className="text-primary hover:underline">
-                воспользуйтесь конфигуратором
+            <p className="text-gray-500 mt-1">
+              От стратегии до реализации.{" "}
+              <Link href="/configurator" className="text-indigo-600 hover:underline">
+                Воспользуйтесь конфигуратором
               </Link>
-              .
             </p>
           </div>
-        </Reveal>
-
-        <div className="space-y-24">
-          {categories.map((category) => (
-            <section key={category.slug}>
-              <Reveal>
-                <div className="flex items-center gap-4 mb-10">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center`}>
-                    <span className="text-xl text-white font-bold">{category.title[0]}</span>
-                  </div>
-                  <div>
-                    <h2 className="text-2xl lg:text-3xl font-bold text-white">
-                      {category.title}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {category.services.map((service) => (
-                  <StaggerItem key={service.title}>
-                    <div className="group p-6 rounded-2xl glass hover:glow-sm transition-all duration-500">
-                      <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-primary transition-colors">
-                        {service.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-sm mt-4">
-                        <span className="font-medium gradient-text">
-                          {service.price}
-                        </span>
-                        <span className="text-muted-foreground">
-                          {service.duration}
-                        </span>
-                      </div>
-                    </div>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </section>
-          ))}
+          <Link
+            href="/configurator"
+            className="hidden md:inline-flex group items-center gap-2 h-12 px-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold rounded-xl transition-all hover:shadow-xl hover:shadow-indigo-600/20 hover:scale-105 active:scale-95 shrink-0"
+          >
+            Подобрать услуги
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
+      </div>
 
-        <Reveal>
-          <div className="mt-24 relative overflow-hidden rounded-3xl p-10 lg:p-16 text-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600" />
-            <div className="absolute inset-0 dot-pattern opacity-20" />
-            <div className="relative z-10">
-              <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4">
-                Не знаете, что выбрать?
-              </h2>
-              <p className="text-violet-100 text-lg mb-8 max-w-xl mx-auto">
-                Наш конфигуратор поможет подобрать оптимальный набор услуг под ваши задачи и бюджет.
-              </p>
-              <Link
-                href="/configurator"
-                className="group inline-flex items-center gap-2 h-14 px-8 bg-white text-violet-700 font-semibold rounded-xl hover:bg-violet-50 transition-all hover:scale-105 active:scale-95"
-              >
-                Подобрать услуги
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
+      <div className="space-y-3">
+        {categories.map((category) => (
+          <div key={category.slug} className="panel p-5">
+            <Reveal>
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+                  <span className="text-lg text-white font-bold">{category.title[0]}</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{category.title}</h2>
+                  <p className="text-sm text-gray-500">{category.description}</p>
+                </div>
+              </div>
+            </Reveal>
+
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {category.services.map((service) => (
+                <StaggerItem key={service.title}>
+                  <div className="group p-4 rounded-xl bg-white/40 border border-white/50 hover:bg-white/70 hover:shadow-md transition-all duration-300">
+                    <h3 className="font-semibold text-gray-800 text-sm group-hover:text-indigo-600 transition-colors">
+                      {service.title}
+                    </h3>
+                    <div className="flex items-center justify-between text-sm mt-2">
+                      <span className="font-medium gradient-text text-xs">{service.price}</span>
+                      <span className="text-gray-400 text-xs">{service.duration}</span>
+                    </div>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
           </div>
-        </Reveal>
+        ))}
       </div>
     </div>
   );

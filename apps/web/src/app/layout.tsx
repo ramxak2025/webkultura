@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { MobileNav } from "@/components/layout/mobile-nav";
+import { VantaClouds } from "@/components/vanta-clouds";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -25,6 +27,9 @@ export const metadata: Metadata = {
     "создание сайтов",
     "SEO продвижение",
     "маркетинг",
+    "Яндекс Директ",
+    "ВК реклама",
+    "Telegram Ads",
     "дизайн",
     "брендинг",
     "React",
@@ -75,10 +80,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col font-sans antialiased">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <body className="font-sans antialiased relative">
+        <VantaClouds />
+        <div className="relative z-10 md:h-screen md:h-dvh md:overflow-hidden md:flex md:flex-col">
+          <Header />
+          <main className="flex-1 md:overflow-hidden relative">
+            {children}
+          </main>
+          <div className="md:block hidden">
+            <Footer />
+          </div>
+        </div>
+        <div className="md:hidden pb-20">
+          <Footer />
+        </div>
+        <MobileNav />
       </body>
     </html>
   );
