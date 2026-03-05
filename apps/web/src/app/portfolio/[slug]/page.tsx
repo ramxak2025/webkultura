@@ -4,10 +4,11 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
-import { PORTFOLIO_PROJECTS } from "@/lib/constants";
+import { getPortfolioProject, getPortfolioProjects } from "@/lib/data";
 
-function getProject(slug: string) {
-  return PORTFOLIO_PROJECTS.find((p) => p.slug === slug) ?? null;
+export async function generateStaticParams() {
+  const projects = await getPortfolioProjects();
+  return projects.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getPortfolioProject(slug);
   if (!project) return { title: "Проект не найден" };
 
   return {
@@ -36,11 +37,23 @@ export default async function PortfolioDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getPortfolioProject(slug);
   if (!project) notFound();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.challenge,
+    keywords: project.techStack.join(", "),
+  };
 
   return (
     <div className="pt-28 pb-24 lg:pt-36 lg:pb-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="container-main max-w-4xl">
         <Reveal>
           <Link
@@ -60,9 +73,28 @@ export default async function PortfolioDetailPage({
 
         <Reveal>
           <div className={`aspect-video rounded-2xl bg-gradient-to-br ${project.gradient} mb-12 overflow-hidden relative`}>
-            <div className="absolute inset-0 dot-pattern opacity-20" />
+            {project.cover ? (
+              <img src={project.cover} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <div className="absolute inset-0 dot-pattern opacity-20" />
+            )}
           </div>
         </Reveal>
+
+        {project.images.length > 0 && (
+          <Reveal>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
+              {project.images.map((img) => (
+                <img
+                  key={img.id}
+                  src={img.url}
+                  alt={img.alt || project.title}
+                  className="rounded-xl w-full aspect-video object-cover"
+                />
+              ))}
+            </div>
+          </Reveal>
+        )}
 
         <div className="space-y-12">
           <Reveal>
@@ -95,21 +127,23 @@ export default async function PortfolioDetailPage({
             </section>
           </Reveal>
 
-          <Reveal>
-            <section>
-              <h2 className="text-xl font-semibold text-white mb-4">Результаты</h2>
-              <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {Object.entries(project.metrics).map(([label, value]) => (
-                  <StaggerItem key={label}>
-                    <div className="p-5 rounded-xl glass text-center">
-                      <div className="text-2xl font-bold gradient-text">{value}</div>
-                      <div className="text-sm text-muted-foreground mt-1">{label}</div>
-                    </div>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </section>
-          </Reveal>
+          {project.metrics && Object.keys(project.metrics).length > 0 && (
+            <Reveal>
+              <section>
+                <h2 className="text-xl font-semibold text-white mb-4">Результаты</h2>
+                <StaggerContainer className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(project.metrics).map(([label, value]) => (
+                    <StaggerItem key={label}>
+                      <div className="p-5 rounded-xl glass text-center">
+                        <div className="text-2xl font-bold gradient-text">{value}</div>
+                        <div className="text-sm text-muted-foreground mt-1">{label}</div>
+                      </div>
+                    </StaggerItem>
+                  ))}
+                </StaggerContainer>
+              </section>
+            </Reveal>
+          )}
         </div>
 
         <Reveal>

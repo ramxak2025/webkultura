@@ -43,7 +43,8 @@ model PortfolioProject {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
-  cover       String
+  cover       String   @default("")
+  gradient    String?
   challenge   String   @db.Text
   solution    String   @db.Text
   techStack   String[]

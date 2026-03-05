@@ -5,7 +5,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
 import { HeroSection } from "@/components/sections/hero";
 import { TestimonialsSection } from "@/components/sections/testimonials";
-import { PORTFOLIO_PROJECTS } from "@/lib/constants";
+import { getPortfolioProjects } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Веб-Культура — Digital-агентство полного цикла",
@@ -55,7 +55,10 @@ const advantages = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const projects = await getPortfolioProjects();
+  const featuredProjects = projects.slice(0, 3);
+
   return (
     <>
       <HeroSection />
@@ -126,13 +129,16 @@ export default function HomePage() {
           </Reveal>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PORTFOLIO_PROJECTS.slice(0, 3).map((project) => (
+            {featuredProjects.map((project) => (
               <StaggerItem key={project.id}>
                 <Link
                   href={`/portfolio/${project.slug}`}
                   className="group block rounded-2xl overflow-hidden glass transition-all duration-500 hover:glow-md"
                 >
                   <div className={`aspect-video bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
+                    {project.cover && (
+                      <img src={project.cover} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+                    )}
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">

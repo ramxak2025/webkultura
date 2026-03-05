@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Edit2, Trash2, X, Save, Loader2 } from "lucide-react";
-import { Button, Input, Label, Textarea, formatPriceRange } from "@webkultura/ui";
+import { Button, Input, Label, Textarea } from "@webkultura/ui";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -61,6 +61,13 @@ function slugify(text: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+function formatPriceRange(from: number | null, to: number | null): string {
+  if (!from && !to) return "По запросу";
+  if (from && to) return `${from.toLocaleString("ru-RU")} - ${to.toLocaleString("ru-RU")} \u20BD`;
+  if (from) return `от ${from.toLocaleString("ru-RU")} \u20BD`;
+  return `до ${to!.toLocaleString("ru-RU")} \u20BD`;
+}
+
 export default function AdminServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +98,6 @@ export default function AdminServicesPage() {
     fetchServices();
   }, [fetchServices]);
 
-  // Flatten root categories for parent selection
   const rootCategories = services.filter((s) => !s.parentId);
 
   function openCreate(parentId?: string) {
@@ -170,39 +176,39 @@ export default function AdminServicesPage() {
     fetchServices();
   }
 
-  if (loading) return <div className="text-neutral-500">Загрузка...</div>;
+  if (loading) return <div className="text-muted-foreground">Загрузка...</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Услуги</h1>
+        <h1 className="text-2xl font-bold text-white">Услуги</h1>
         <Button size="sm" onClick={() => openCreate()}>
           <Plus size={16} className="mr-1" /> Добавить услугу
         </Button>
       </div>
 
       {services.length === 0 ? (
-        <p className="text-neutral-500">Нет услуг</p>
+        <p className="text-muted-foreground">Нет услуг</p>
       ) : (
         <div className="space-y-6">
           {services.map((category) => (
             <div
               key={category.id}
-              className="bg-white rounded-xl border border-neutral-200 overflow-hidden"
+              className="glass rounded-xl overflow-hidden"
             >
-              <div className="flex items-center justify-between p-4 bg-neutral-50 border-b border-neutral-200">
-                <h2 className="font-semibold text-neutral-900">{category.title}</h2>
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h2 className="font-semibold text-white">{category.title}</h2>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => openCreate(category.id)}
-                    className="p-1.5 text-neutral-400 hover:text-brand-600 transition-colors"
+                    className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
                     title="Добавить дочернюю услугу"
                   >
                     <Plus size={16} />
                   </button>
                   <button
                     onClick={() => openEdit(category)}
-                    className="p-1.5 text-neutral-400 hover:text-brand-600 transition-colors"
+                    className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Edit2 size={16} />
                   </button>
@@ -215,21 +221,21 @@ export default function AdminServicesPage() {
                     {category.children.map((svc) => (
                       <tr
                         key={svc.id}
-                        className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
+                        className="border-b border-border/50 last:border-0 hover:bg-secondary/50"
                       >
-                        <td className="p-4 font-medium text-neutral-900">
+                        <td className="p-4 font-medium text-white">
                           {svc.title}
                         </td>
-                        <td className="p-4 text-neutral-500">
+                        <td className="p-4 text-muted-foreground">
                           {formatPriceRange(svc.priceFrom, svc.priceTo)}
                         </td>
-                        <td className="p-4 text-neutral-500 text-xs">
-                          {svc.durationEstimate || "—"}
+                        <td className="p-4 text-muted-foreground text-xs hidden sm:table-cell">
+                          {svc.durationEstimate || "\u2014"}
                         </td>
                         <td className="p-4">
                           <span
                             className={`text-xs font-medium ${
-                              svc.published ? "text-green-600" : "text-neutral-400"
+                              svc.published ? "text-emerald-400" : "text-muted-foreground"
                             }`}
                           >
                             {svc.published ? "Активна" : "Скрыта"}
@@ -239,13 +245,13 @@ export default function AdminServicesPage() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => openEdit(svc)}
-                              className="p-1.5 text-neutral-400 hover:text-brand-600 transition-colors"
+                              className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
                             >
                               <Edit2 size={16} />
                             </button>
                             <button
                               onClick={() => deleteService(svc.id)}
-                              className="p-1.5 text-neutral-400 hover:text-red-500 transition-colors"
+                              className="p-1.5 text-muted-foreground hover:text-red-400 transition-colors"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -265,24 +271,24 @@ export default function AdminServicesPage() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4">
           <div
-            className="fixed inset-0 bg-black/40"
+            className="fixed inset-0 bg-black/60"
             onClick={() => setModalOpen(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6">
+          <div className="relative glass-strong rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-neutral-900">
+              <h2 className="text-xl font-bold text-white">
                 {editingId ? "Редактировать услугу" : "Новая услуга"}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-900 transition-colors"
+                className="p-1.5 text-muted-foreground hover:text-white transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
             {error && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-sm">
+              <div className="mb-4 p-3 rounded-lg bg-red-500/20 text-red-400 text-sm">
                 {error}
               </div>
             )}
@@ -319,7 +325,7 @@ export default function AdminServicesPage() {
                 <select
                   value={form.parentId}
                   onChange={(e) => setForm((f) => ({ ...f, parentId: e.target.value }))}
-                  className="mt-1.5 w-full h-10 px-3 rounded-lg border border-neutral-200 bg-white text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="mt-1.5 w-full h-11 px-4 rounded-lg border border-border bg-secondary text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
                   <option value="">Корневая категория</option>
                   {rootCategories.map((cat) => (
@@ -343,7 +349,7 @@ export default function AdminServicesPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Цена от (₽)</Label>
+                  <Label>Цена от (\u20BD)</Label>
                   <Input
                     className="mt-1.5"
                     type="number"
@@ -353,7 +359,7 @@ export default function AdminServicesPage() {
                   />
                 </div>
                 <div>
-                  <Label>Цена до (₽)</Label>
+                  <Label>Цена до (\u20BD)</Label>
                   <Input
                     className="mt-1.5"
                     type="number"
@@ -390,13 +396,13 @@ export default function AdminServicesPage() {
                   type="checkbox"
                   checked={form.published}
                   onChange={(e) => setForm((f) => ({ ...f, published: e.target.checked }))}
-                  className="w-4 h-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+                  className="w-4 h-4 rounded border-border bg-secondary text-primary focus:ring-primary/30"
                 />
-                <span className="text-sm font-medium text-neutral-700">Активна</span>
+                <span className="text-sm font-medium text-foreground">Активна</span>
               </label>
             </div>
 
-            <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-neutral-200">
+            <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-border">
               <Button variant="outline" onClick={() => setModalOpen(false)}>
                 Отмена
               </Button>

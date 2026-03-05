@@ -47,4 +47,36 @@ export class PortfolioService {
       include: { _count: { select: { projects: true } } },
     });
   }
+
+  async addImage(projectId: string, url: string, alt: string) {
+    const maxOrder = await this.prisma.portfolioImage.findFirst({
+      where: { projectId },
+      orderBy: { order: "desc" },
+      select: { order: true },
+    });
+    return this.prisma.portfolioImage.create({
+      data: {
+        projectId,
+        url,
+        alt,
+        order: (maxOrder?.order ?? -1) + 1,
+      },
+    });
+  }
+
+  async removeImage(projectId: string, imageId: string) {
+    return this.prisma.portfolioImage.delete({
+      where: { id: imageId, projectId },
+    });
+  }
+
+  async reorderImages(projectId: string, imageIds: string[]) {
+    const updates = imageIds.map((id, index) =>
+      this.prisma.portfolioImage.update({
+        where: { id, projectId },
+        data: { order: index },
+      })
+    );
+    return this.prisma.$transaction(updates);
+  }
 }

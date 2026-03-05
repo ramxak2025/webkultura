@@ -61,4 +61,34 @@ export class PortfolioController {
   remove(@Param("id") id: string) {
     return this.portfolioService.remove(id);
   }
+
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles("ADMIN", "MANAGER")
+  @Post(":id/images")
+  addImage(
+    @Param("id") id: string,
+    @Body() body: { url: string; alt?: string }
+  ) {
+    return this.portfolioService.addImage(id, body.url, body.alt || "");
+  }
+
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles("ADMIN", "MANAGER")
+  @Delete(":id/images/:imageId")
+  removeImage(
+    @Param("id") id: string,
+    @Param("imageId") imageId: string
+  ) {
+    return this.portfolioService.removeImage(id, imageId);
+  }
+
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles("ADMIN", "MANAGER")
+  @Patch(":id/images/reorder")
+  reorderImages(
+    @Param("id") id: string,
+    @Body() body: { imageIds: string[] }
+  ) {
+    return this.portfolioService.reorderImages(id, body.imageIds);
+  }
 }

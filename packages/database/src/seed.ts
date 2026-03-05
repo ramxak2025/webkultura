@@ -16,8 +16,8 @@ async function hashPassword(password: string): Promise<string> {
 async function main() {
   console.log("Seeding database...");
 
-  // Admin user
-  const adminPassword = await hashPassword("admin123");
+  // Admin user (password from env or default)
+  const adminPassword = await hashPassword(process.env.ADMIN_PASSWORD || "admin123");
   await prisma.user.upsert({
     where: { email: "admin@webkultura.ru" },
     update: {},
@@ -28,6 +28,7 @@ async function main() {
       role: UserRole.ADMIN,
     },
   });
+  console.log("  Admin user created");
 
   // Portfolio categories
   const categories = [
@@ -37,13 +38,100 @@ async function main() {
     { name: "Мобильная разработка", slug: "mobile", order: 4 },
   ];
 
+  const categoryMap: Record<string, string> = {};
   for (const cat of categories) {
-    await prisma.portfolioCategory.upsert({
+    const result = await prisma.portfolioCategory.upsert({
       where: { slug: cat.slug },
       update: {},
       create: cat,
     });
+    categoryMap[cat.slug] = result.id;
   }
+  console.log("  Portfolio categories created");
+
+  // Portfolio projects
+  const portfolioProjects = [
+    {
+      slug: "fintech-platform",
+      title: "FinTech платформа",
+      categorySlug: "web-development",
+      gradient: "from-violet-600 via-purple-600 to-indigo-600",
+      challenge: "Создать удобную платформу для управления инвестициями с real-time данными и аналитикой.",
+      solution: "Разработали SPA на React с WebSocket для live-обновлений, Node.js бэкенд с микросервисной архитектурой.",
+      techStack: ["React", "TypeScript", "Node.js", "PostgreSQL", "Redis", "Docker"],
+      metrics: { "Конверсия": "+340%", "Скорость": "0.8s", "Пользователи": "15K+" },
+      order: 1,
+    },
+    {
+      slug: "ecommerce-luxury",
+      title: "Luxury E-Commerce",
+      categorySlug: "web-development",
+      gradient: "from-amber-500 via-orange-500 to-red-500",
+      challenge: "Запустить премиальный интернет-магазин с 3D-просмотром товаров и персонализацией.",
+      solution: "Next.js + Three.js для 3D, AI-рекомендации, headless CMS для управления каталогом.",
+      techStack: ["Next.js", "Three.js", "Strapi", "Stripe", "AWS"],
+      metrics: { "Средний чек": "+180%", "Время на сайте": "5.2 мин", "Продажи": "+420%" },
+      order: 2,
+    },
+    {
+      slug: "brand-identity-nova",
+      title: "Nova — Ребрендинг",
+      categorySlug: "design",
+      gradient: "from-emerald-500 via-teal-500 to-cyan-500",
+      challenge: "Полный ребрендинг IT-компании: от логотипа до всех цифровых носителей.",
+      solution: "Разработали новую визуальную систему, брендбук на 80 страниц, шаблоны для соцсетей и презентаций.",
+      techStack: ["Figma", "After Effects", "Illustrator"],
+      metrics: { "Узнаваемость": "+250%", "Вовлечённость": "+180%", "NPS": "92" },
+      order: 3,
+    },
+    {
+      slug: "marketing-saas",
+      title: "SaaS маркетинг-платформа",
+      categorySlug: "marketing",
+      gradient: "from-blue-500 via-indigo-500 to-violet-500",
+      challenge: "Увеличить MRR B2B SaaS-продукта через digital-маркетинг.",
+      solution: "Запустили комплексную стратегию: SEO, контент, Яндекс Директ, ретаргетинг.",
+      techStack: ["Яндекс Директ", "Google Ads", "SEO", "Content Marketing"],
+      metrics: { "MRR": "+280%", "CAC": "-45%", "LTV": "+320%" },
+      order: 4,
+    },
+    {
+      slug: "medical-portal",
+      title: "Медицинский портал",
+      categorySlug: "web-development",
+      gradient: "from-sky-500 via-blue-500 to-indigo-500",
+      challenge: "Разработать портал для записи к врачам с интеграцией в МИС клиники.",
+      solution: "Full-stack разработка на Next.js + NestJS, интеграция с 1С:Медицина, личный кабинет пациента.",
+      techStack: ["Next.js", "NestJS", "PostgreSQL", "1С", "Docker"],
+      metrics: { "Онлайн-записи": "+500%", "Нагрузка на колл-центр": "-60%", "NPS": "89" },
+      order: 5,
+    },
+    {
+      slug: "restaurant-chain",
+      title: "Сеть ресторанов — Digital",
+      categorySlug: "marketing",
+      gradient: "from-rose-500 via-pink-500 to-fuchsia-500",
+      challenge: "Увеличить посещаемость сети из 12 ресторанов через digital-каналы.",
+      solution: "Геотаргетинг, UGC-контент, программа лояльности, SMM-стратегия.",
+      techStack: ["Таргет", "SMM", "Influence", "CRM"],
+      metrics: { "Трафик": "+200%", "Повторные визиты": "+85%", "ROI": "380%" },
+      order: 6,
+    },
+  ];
+
+  for (const project of portfolioProjects) {
+    const { categorySlug, ...data } = project;
+    await prisma.portfolioProject.upsert({
+      where: { slug: data.slug },
+      update: {},
+      create: {
+        ...data,
+        published: true,
+        categoryId: categoryMap[categorySlug]!,
+      },
+    });
+  }
+  console.log("  Portfolio projects created");
 
   // Service categories + children
   const services = [
@@ -175,8 +263,9 @@ async function main() {
       }
     }
   }
+  console.log("  Services created");
 
-  // Add "often purchased together" relations
+  // Service relations ("often purchased together")
   const yandexDirect = await prisma.service.findUnique({ where: { slug: "yandex-direct" } });
   const seo = await prisma.service.findUnique({ where: { slug: "seo" } });
   const landing = await prisma.service.findUnique({ where: { slug: "landing-page" } });
@@ -197,6 +286,7 @@ async function main() {
       create: { serviceId: landing.id, relatedId: uiux.id },
     });
   }
+  console.log("  Service relations created");
 
   console.log("Seed completed.");
 }

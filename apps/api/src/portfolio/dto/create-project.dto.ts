@@ -17,7 +17,12 @@ export class CreateProjectDto {
   slug!: string;
 
   @IsString()
-  cover!: string;
+  @IsOptional()
+  cover?: string;
+
+  @IsString()
+  @IsOptional()
+  gradient?: string;
 
   @IsString()
   @MinLength(10)

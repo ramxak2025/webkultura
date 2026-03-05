@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Reveal } from "@/components/motion/reveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
-import { PORTFOLIO_PROJECTS } from "@/lib/constants";
+import { getPortfolioProjects } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Портфолио",
@@ -10,7 +10,9 @@ export const metadata: Metadata = {
     "Наши проекты — сайты, интернет-магазины, маркетинговые кампании и дизайн. Кейсы и результаты работы.",
 };
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const projects = await getPortfolioProjects();
+
   return (
     <div className="pt-28 pb-24 lg:pt-36 lg:pb-32">
       <div className="container-main">
@@ -28,13 +30,16 @@ export default function PortfolioPage() {
         </Reveal>
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PORTFOLIO_PROJECTS.map((project) => (
+          {projects.map((project) => (
             <StaggerItem key={project.id}>
               <Link
                 href={`/portfolio/${project.slug}`}
                 className="group block rounded-2xl overflow-hidden glass transition-all duration-500 hover:glow-md"
               >
                 <div className={`aspect-video bg-gradient-to-br ${project.gradient} relative overflow-hidden`}>
+                  {project.cover && (
+                    <img src={project.cover} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+                  )}
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-colors duration-500" />
                   <div className="absolute bottom-4 left-4">
                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
@@ -53,7 +58,7 @@ export default function PortfolioPage() {
                       </span>
                     ))}
                   </div>
-                  {project.metrics && (
+                  {project.metrics && Object.keys(project.metrics).length > 0 && (
                     <div className="flex gap-4 pt-4 border-t border-border/50">
                       {Object.entries(project.metrics).slice(0, 2).map(([key, value]) => (
                         <div key={key}>

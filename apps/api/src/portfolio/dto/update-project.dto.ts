@@ -12,6 +12,10 @@ export class UpdateProjectDto {
 
   @IsString()
   @IsOptional()
+  gradient?: string;
+
+  @IsString()
+  @IsOptional()
   challenge?: string;
 
   @IsString()

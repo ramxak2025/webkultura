@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { StaggerContainer, StaggerItem } from "@/components/motion/stagger";
-import { SERVICE_CATEGORIES } from "@/lib/constants";
+import { getServices } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Услуги",
@@ -11,9 +11,26 @@ export const metadata: Metadata = {
     "Веб-разработка, маркетинг, дизайн — полный спектр digital-услуг для вашего бизнеса.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const categories = await getServices();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: categories.map((cat, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: cat.title,
+      description: cat.description,
+    })),
+  };
+
   return (
     <div className="pt-28 pb-24 lg:pt-36 lg:pb-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="container-main">
         <Reveal>
           <div className="max-w-3xl mb-20">
@@ -33,7 +50,7 @@ export default function ServicesPage() {
         </Reveal>
 
         <div className="space-y-24">
-          {SERVICE_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <section key={category.slug}>
               <Reveal>
                 <div className="flex items-center gap-4 mb-10">
